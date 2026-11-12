@@ -23,6 +23,7 @@ dotnet run --project src/EmployeeManagement.ConsoleApp -- <csv-file> <command> [
 ```
 
 Commands: `list`, `summary`, `search <text>`, `dept <name>`, `raise <percent>`.
+`dotnet run --project src/EmployeeManagement.ConsoleApp -- linq` runs the Day 3 LINQ exercises against built-in sample data.
 Invalid rows are skipped and reported on stderr. A missing file exits with code `2`, and bad arguments exit with code `1`.
 
 ## Sample inputs and outputs
@@ -67,3 +68,4 @@ Input file 'missing.csv' was not found.
 
 - Day 1: [Value vs reference types](docs/week1/day1-value-vs-reference-types.md)
 - Day 2: [Domain model, class diagram and SOLID](docs/week1/day2-domain-design.md)
+- Day 3: [LINQ queries with inputs, outputs and complexity](docs/week1/day3-linq-queries.md)

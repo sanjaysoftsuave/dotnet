@@ -3,6 +3,7 @@ using EmployeeManagement.ConsoleApp;
 
 const string Usage = """
     Usage: EmployeeManagement.ConsoleApp <csv-file> <command> [argument]
+           EmployeeManagement.ConsoleApp linq
 
     Commands:
       list                 Print all employees
@@ -10,7 +11,14 @@ const string Usage = """
       search <text>        Find employees by name or email
       dept <name>          List employees in a department
       raise <percent>      Apply a raise to everyone and print the new table
+      linq                 Run the LINQ exercises against the built-in sample data
     """;
+
+if (args is ["linq"])
+{
+    Console.WriteLine(LinqDemo.Run());
+    return 0;
+}
 
 if (args.Length < 2)
 {

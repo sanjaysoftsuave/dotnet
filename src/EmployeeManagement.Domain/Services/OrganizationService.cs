@@ -8,6 +8,9 @@ namespace EmployeeManagement.Domain.Services;
 // Depends on abstractions (DIP) and composes repositories instead of inheriting from them.
 public sealed class OrganizationService(IEmployeeRepository employees, IDepartmentRepository departments)
 {
+    // Event: subscribers (audit log, notifications) react without the service knowing about them.
+    public event EventHandler<EmployeeTransferredEventArgs>? EmployeeTransferred;
+
     public Employee Hire(Employee employee)
     {
         GetDepartment(employee.DepartmentId);
@@ -24,7 +27,15 @@ public sealed class OrganizationService(IEmployeeRepository employees, IDepartme
     {
         Employee employee = GetEmployee(employeeId);
         GetDepartment(departmentId);
+
+        int fromDepartmentId = employee.DepartmentId;
+        if (fromDepartmentId == departmentId)
+        {
+            return;
+        }
+
         employee.TransferTo(departmentId);
+        EmployeeTransferred?.Invoke(this, new EmployeeTransferredEventArgs(employeeId, fromDepartmentId, departmentId));
     }
 
     public void AppointHead(int departmentId, int employeeId)
@@ -43,14 +54,7 @@ public sealed class OrganizationService(IEmployeeRepository employees, IDepartme
     public decimal GetDepartmentAnnualCost(int departmentId)
     {
         GetDepartment(departmentId);
-
-        decimal total = 0;
-        foreach (Employee employee in employees.GetByDepartment(departmentId))
-        {
-            total += employee.CalculateAnnualCost();
-        }
-
-        return total;
+        return employees.GetByDepartment(departmentId).Sum(e => e.CalculateAnnualCost());
     }
 
     public bool IsOverBudget(int departmentId) =>
