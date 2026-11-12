@@ -1,5 +1,7 @@
 # Day 1: Value vs reference types in the console app
 
+> This note describes the Day 1 code (commit "Day 1: C# fundamentals console app"). On Day 5, `EmployeeRecord` was replaced by the domain `Employee` classes and `SalaryStats` became `CostStatistics` (a `readonly record struct`). The same value/reference rules apply.
+
 ## Value types used
 
 | Type | Where | Why it matters |

@@ -107,7 +107,7 @@ classDiagram
 | Polymorphism | `CalculateAnnualCost()` is `abstract` in `Employee`. Code that totals a department's cost does not need to know the employee kind. |
 | Abstract class vs interface | `Employee` is an abstract class because the subclasses share state (names, hire date) and behaviour. `IEmployeeRepository` is an interface because it is a pure contract that very different storage types can implement. |
 | Records | `Address` is a `record`, so it is immutable and compared by value. |
-| Structs | `SalaryStats` in the console app is a `readonly struct`, a small value that is copied by value. |
+| Structs | `CostStatistics` is a `readonly record struct` (added on Day 5, replacing the Day 1 `SalaryStats`): a small value that is copied by value. |
 | Access modifiers | `Guard` is `internal` (only visible inside the library). Constructors of `Employee` are `protected` (only subclasses can call them). Subclasses are `sealed`. |
 | Composition | `Employee` *has an* `Address`. `OrganizationService` *has* repositories rather than inheriting from them. |
 

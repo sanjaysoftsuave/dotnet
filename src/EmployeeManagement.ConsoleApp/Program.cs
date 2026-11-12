@@ -1,92 +1,77 @@
-﻿using System.Globalization;
-using EmployeeManagement.ConsoleApp;
+﻿using EmployeeManagement.ConsoleApp;
+using EmployeeManagement.Domain.Common;
 
 const string Usage = """
-    Usage: EmployeeManagement.ConsoleApp <csv-file> <command> [argument]
-           EmployeeManagement.ConsoleApp linq
+    Usage: EmployeeManagement.ConsoleApp <csv-file> <command> [arguments]
            EmployeeManagement.ConsoleApp import <csv-file>
+           EmployeeManagement.ConsoleApp linq
 
     Commands:
       list                 Print all employees
-      summary              Salary statistics and head count per department
-      search <text>        Find employees by name or email
+      summary              Cost statistics and head count per department
+      search <text>        Find employees by name
       dept <name>          List employees in a department
-      raise <percent>      Apply a raise to everyone and print the new table
+      hired <from> <to>    Employees hired between two dates (yyyy-MM-dd, inclusive)
+      raise <percent>      Give every full-time employee a raise (0 < percent <= 50)
+      import               Load the file and report how many rows were imported
       linq                 Run the LINQ exercises against the built-in sample data
+
+    Ctrl+C cancels loading. Exit codes: 0 ok, 1 bad input, 2 file not found, 3 cancelled.
     """;
 
-if (args is ["linq"])
+// Cancelled by Ctrl+C or after 30 seconds, whichever comes first.
+using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+Console.CancelKeyPress += (_, e) =>
 {
-    Console.WriteLine(LinqDemo.Run());
-    return 0;
-}
-
-if (args is ["import", string importPath])
-{
-    return await ImportCommand.RunAsync(importPath);
-}
-
-if (args.Length < 2)
-{
-    Console.WriteLine(Usage);
-    return 1;
-}
-
-var errors = new List<string>();
-List<EmployeeRecord> employees;
+    e.Cancel = true; // keep the process alive so we can report cleanly
+    cancellation.Cancel();
+};
 
 try
 {
-    employees = EmployeeCsvParser.LoadFromFile(args[0], errors);
+    switch (args)
+    {
+        case ["linq"]:
+            Console.WriteLine(LinqDemo.Run());
+            return 0;
+
+        case ["import", string importPath]:
+            Console.WriteLine(ReportFormatter.FormatImport(await LoadAsync(importPath)));
+            return 0;
+
+        case [string path, string command, .. string[] arguments]:
+            LoadedOrganization org = await LoadAsync(path);
+            Console.WriteLine(ReportCommands.Execute(org, command, arguments));
+            return 0;
+
+        default:
+            Console.WriteLine(Usage);
+            return 1;
+    }
 }
 catch (FileNotFoundException ex)
 {
     Console.Error.WriteLine(ex.Message);
     return 2;
 }
-
-foreach (string error in errors)
+catch (OperationCanceledException)
 {
-    Console.Error.WriteLine($"Skipped {error}");
+    Console.Error.WriteLine("Cancelled.");
+    return 3;
 }
-
-string command = args[1].ToLowerInvariant();
-string? argument = args.Length > 2 ? args[2] : null;
-
-try
-{
-    string output = command switch
-    {
-        "list" => ReportFormatter.FormatTable(employees),
-        "summary" => ReportFormatter.FormatSummary(
-            EmployeeProcessor.CalculateStats(employees),
-            EmployeeProcessor.CountByDepartment(employees)),
-        "search" => ReportFormatter.FormatTable(EmployeeProcessor.Search(employees, Require(argument, "search text"))),
-        "dept" => ReportFormatter.FormatTable(EmployeeProcessor.InDepartment(employees, Require(argument, "department name"))),
-        "raise" => FormatRaise(employees, ParsePercent(Require(argument, "percent"))),
-        _ => throw new ArgumentException($"Unknown command '{command}'.\n\n{Usage}"),
-    };
-
-    Console.WriteLine(output);
-    return 0;
-}
-catch (ArgumentException ex)
+catch (Exception ex) when (ex is ArgumentException or DomainException)
 {
     Console.Error.WriteLine(ex.Message);
     return 1;
 }
 
-static string Require(string? value, string name) =>
-    string.IsNullOrWhiteSpace(value) ? throw new ArgumentException($"Missing argument: {name}.") : value;
-
-static decimal ParsePercent(string value) =>
-    decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out decimal percent)
-        ? percent
-        : throw new ArgumentException($"'{value}' is not a valid percent.");
-
-static string FormatRaise(List<EmployeeRecord> employees, decimal percent)
+async Task<LoadedOrganization> LoadAsync(string path)
 {
-    decimal increase = EmployeeProcessor.ApplyRaise(employees, percent);
-    return ReportFormatter.FormatTable(employees) +
-        string.Create(CultureInfo.InvariantCulture, $"\nTotal payroll increase: {increase:N2}");
+    LoadedOrganization org = await CsvOrganizationLoader.LoadAsync(path, cancellation.Token);
+    foreach (string error in org.Import.Errors)
+    {
+        Console.Error.WriteLine($"Skipped {error}");
+    }
+
+    return org;
 }

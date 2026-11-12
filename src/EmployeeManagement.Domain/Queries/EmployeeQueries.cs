@@ -19,7 +19,7 @@ public static class EmployeeQueries
             throw new ArgumentException("'from' must be on or before 'to'.", nameof(from));
         }
 
-        return employees.Where(e => e.HireDate >= from && e.HireDate < to);
+        return employees.Where(e => e.HireDate >= from && e.HireDate <= to);
     }
 
     // Q3 OrderBy + ThenBy
@@ -78,4 +78,8 @@ public static class EmployeeQueries
         ArgumentOutOfRangeException.ThrowIfLessThan(pageSize, 1);
         return source.Skip((pageNumber - 1) * pageSize).Take(pageSize);
     }
+
+    // Q13 Aggregate: count, total, min and max in a single pass
+    public static CostStatistics SummarizeCost(this IEnumerable<Employee> employees) =>
+        employees.Aggregate(default(CostStatistics), (stats, e) => stats.Add(e.CalculateAnnualCost()));
 }
