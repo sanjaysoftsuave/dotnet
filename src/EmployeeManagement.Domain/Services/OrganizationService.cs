@@ -38,6 +38,17 @@ public sealed class OrganizationService(IEmployeeRepository employees, IDepartme
         EmployeeTransferred?.Invoke(this, new EmployeeTransferredEventArgs(employeeId, fromDepartmentId, departmentId));
     }
 
+    public void AssignManager(int employeeId, int? managerId)
+    {
+        Employee employee = GetEmployee(employeeId);
+        if (managerId is int id)
+        {
+            GetEmployee(id);
+        }
+
+        employee.AssignManager(managerId);
+    }
+
     public void AppointHead(int departmentId, int employeeId)
     {
         Department department = GetDepartment(departmentId);

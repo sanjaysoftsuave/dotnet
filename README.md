@@ -12,6 +12,7 @@ Capstone project for the 3-week .NET Engineering Bridge. The domain is **Employe
 |---|---|
 | `src/EmployeeManagement.ConsoleApp` | Console app that loads employee records from CSV and prints reports |
 | `src/EmployeeManagement.Domain` | Domain model (employees, departments), repository interfaces and in-memory implementations, organisation rules |
+| `tests/EmployeeManagement.Domain.Tests` | xUnit tests for the domain, queries and importer |
 | `data/employees.csv` | Sample input (the last row is invalid on purpose) |
 | `docs/week1` | Daily notes |
 
@@ -24,6 +25,13 @@ dotnet run --project src/EmployeeManagement.ConsoleApp -- <csv-file> <command> [
 
 Commands: `list`, `summary`, `search <text>`, `dept <name>`, `raise <percent>`.
 `dotnet run --project src/EmployeeManagement.ConsoleApp -- linq` runs the Day 3 LINQ exercises against built-in sample data.
+`dotnet run --project src/EmployeeManagement.ConsoleApp -- import <csv-file>` imports asynchronously. Ctrl+C cancels it.
+
+## Test
+
+```bash
+dotnet test
+```
 Invalid rows are skipped and reported on stderr. A missing file exits with code `2`, and bad arguments exit with code `1`.
 
 ## Sample inputs and outputs
@@ -69,3 +77,4 @@ Input file 'missing.csv' was not found.
 - Day 1: [Value vs reference types](docs/week1/day1-value-vs-reference-types.md)
 - Day 2: [Domain model, class diagram and SOLID](docs/week1/day2-domain-design.md)
 - Day 3: [LINQ queries with inputs, outputs and complexity](docs/week1/day3-linq-queries.md)
+- Day 4: [Testing, async and tooling](docs/week1/day4-testing-and-async.md) and the [build/test log](docs/week1/day4-build-test-log.txt)

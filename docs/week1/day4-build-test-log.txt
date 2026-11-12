@@ -1,0 +1,47 @@
+# Captured 2026-11-12 18:22 with .NET SDK 10.0.404
+
+> dotnet build
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  EmployeeManagement.Domain -> d:\Project\DotNet\dotnet\src\EmployeeManagement.Domain\bin\Debug\net10.0\EmployeeManagement.Domain.dll
+  EmployeeManagement.ConsoleApp -> d:\Project\DotNet\dotnet\src\EmployeeManagement.ConsoleApp\bin\Debug\net10.0\EmployeeManagement.ConsoleApp.dll
+  EmployeeManagement.Domain.Tests -> d:\Project\DotNet\dotnet\tests\EmployeeManagement.Domain.Tests\bin\Debug\net10.0\EmployeeManagement.Domain.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.19
+
+> dotnet test --no-build --logger "console;verbosity=normal"
+Test run for d:\Project\DotNet\dotnet\tests\EmployeeManagement.Domain.Tests\bin\Debug\net10.0\EmployeeManagement.Domain.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.15)
+[xUnit.net 00:00:00.07]   Discovering: EmployeeManagement.Domain.Tests
+[xUnit.net 00:00:00.11]   Discovered:  EmployeeManagement.Domain.Tests
+[xUnit.net 00:00:00.14]   Starting:    EmployeeManagement.Domain.Tests
+  Passed EmployeeManagement.Domain.Tests.OrganizationServiceTests.Transfer_ToOtherDepartment_MovesEmployeeAndRaisesEvent [19 ms]
+  Passed EmployeeManagement.Domain.Tests.EmployeeTests.CalculateAnnualCost_FullTime_AddsBenefitsToSalary [11 ms]
+  Passed EmployeeManagement.Domain.Tests.EmployeeCsvImporterTests.ImportAsync_InvalidRow_SkipsItAndReportsLineNumber [16 ms]
+  Passed EmployeeManagement.Domain.Tests.EmployeeTests.GiveRaise_ZeroPercent_ThrowsDomainException [1 ms]
+  Passed EmployeeManagement.Domain.Tests.EmployeeTests.YearsOfService_DayBeforeAnniversary_DoesNotCountTheYear [< 1 ms]
+  Passed EmployeeManagement.Domain.Tests.EmployeeQueriesTests.GroupBySalaryBand_SampleData_PutsContractorsInContractBand [26 ms]
+  Passed EmployeeManagement.Domain.Tests.EmployeeTests.CalculateAnnualCost_Contractor_IsRateTimesHours [< 1 ms]
+  Passed EmployeeManagement.Domain.Tests.EmployeeTests.AssignManager_Self_ThrowsDomainException [< 1 ms]
+  Passed EmployeeManagement.Domain.Tests.EmployeeTests.GiveRaise_ValidPercent_IncreasesSalary [< 1 ms]
+  Passed EmployeeManagement.Domain.Tests.EmployeeQueriesTests.SearchByName_IsDeferred_SeesItemsAddedAfterTheQueryIsBuilt [2 ms]
+  Passed EmployeeManagement.Domain.Tests.OrganizationServiceTests.Hire_UnknownDepartment_ThrowsEntityNotFound [5 ms]
+  Passed EmployeeManagement.Domain.Tests.EmployeeCsvImporterTests.ImportAsync_CancelledToken_ThrowsAndImportsNothing [5 ms]
+  Passed EmployeeManagement.Domain.Tests.OrganizationServiceTests.AppointHead_EmployeeFromAnotherDepartment_ThrowsDomainException [1 ms]
+[xUnit.net 00:00:00.24]   Finished:    EmployeeManagement.Domain.Tests
+  Passed EmployeeManagement.Domain.Tests.EmployeeCsvImporterTests.ImportAsync_ValidRows_ImportsEmployeesAndLinksLaterManagers [5 ms]
+  Passed EmployeeManagement.Domain.Tests.OrganizationServiceTests.IsOverBudget_CostAboveBudget_ReturnsTrue [4 ms]
+  Passed EmployeeManagement.Domain.Tests.OrganizationServiceTests.Transfer_ToSameDepartment_DoesNotRaiseEvent [< 1 ms]
+  Passed EmployeeManagement.Domain.Tests.EmployeeQueriesTests.CostByDepartment_SampleData_FlagsEngineeringAndSupportOverBudget [16 ms]
+  Passed EmployeeManagement.Domain.Tests.EmployeeQueriesTests.TopByCost_ThreeRequested_ReturnsHighestCostsInOrder [2 ms]
+  Passed EmployeeManagement.Domain.Tests.EmployeeQueriesTests.Page_SecondPageOfFour_SkipsFirstFour [1 ms]
+
+Test Run Successful.
+Total tests: 19
+     Passed: 19
+ Total time: 0.7218 Seconds

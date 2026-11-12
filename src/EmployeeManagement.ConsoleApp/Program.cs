@@ -4,6 +4,7 @@ using EmployeeManagement.ConsoleApp;
 const string Usage = """
     Usage: EmployeeManagement.ConsoleApp <csv-file> <command> [argument]
            EmployeeManagement.ConsoleApp linq
+           EmployeeManagement.ConsoleApp import <csv-file>
 
     Commands:
       list                 Print all employees
@@ -18,6 +19,11 @@ if (args is ["linq"])
 {
     Console.WriteLine(LinqDemo.Run());
     return 0;
+}
+
+if (args is ["import", string importPath])
+{
+    return await ImportCommand.RunAsync(importPath);
 }
 
 if (args.Length < 2)
