@@ -1,0 +1,146 @@
+@host = http://localhost:5006
+
+### ---------- Employees: success ----------
+
+### List employees (200)
+GET {{host}}/api/employees
+Accept: application/json
+
+### Get one employee (200)
+GET {{host}}/api/employees/1
+
+### Create a full-time employee (201 + Location header)
+POST {{host}}/api/employees
+Content-Type: application/json
+
+{
+  "firstName": "Priya",
+  "lastName": "Shah",
+  "email": "priya.shah@example.com",
+  "departmentId": 1,
+  "managerId": 1,
+  "hireDate": "2026-11-02",
+  "employmentType": "FullTime",
+  "annualSalary": 110000
+}
+
+### Create a contractor (201)
+POST {{host}}/api/employees
+Content-Type: application/json
+
+{
+  "firstName": "Omar",
+  "lastName": "Haddad",
+  "departmentId": 4,
+  "hireDate": "2026-11-02",
+  "employmentType": "Contractor",
+  "hourlyRate": 45,
+  "hoursPerYear": 1200,
+  "contractEnd": "2027-10-31"
+}
+
+### Replace an employee's editable fields (204)
+PUT {{host}}/api/employees/3
+Content-Type: application/json
+
+{
+  "firstName": "Meera",
+  "lastName": "Nair",
+  "email": "meera.nair@example.com",
+  "departmentId": 1,
+  "managerId": 2
+}
+
+### Give a raise (200)
+POST {{host}}/api/employees/2/raise
+Content-Type: application/json
+
+{ "percent": 5 }
+
+### ---------- Employees: failure ----------
+
+### Unknown id (404)
+GET {{host}}/api/employees/999
+
+### Missing required fields and bad email (400 validation problem)
+POST {{host}}/api/employees
+Content-Type: application/json
+
+{
+  "firstName": "",
+  "email": "not-an-email",
+  "departmentId": 1,
+  "employmentType": "FullTime"
+}
+
+### Contractor without contract details (400, cross-field validation)
+POST {{host}}/api/employees
+Content-Type: application/json
+
+{
+  "firstName": "Omar",
+  "lastName": "Haddad",
+  "departmentId": 4,
+  "hireDate": "2026-11-02",
+  "employmentType": "Contractor"
+}
+
+### Department does not exist (400, business rule)
+POST {{host}}/api/employees
+Content-Type: application/json
+
+{
+  "firstName": "Priya",
+  "lastName": "Shah",
+  "departmentId": 99,
+  "hireDate": "2026-11-02",
+  "employmentType": "FullTime",
+  "annualSalary": 110000
+}
+
+### Raise for a contractor (400, business rule)
+POST {{host}}/api/employees/9/raise
+Content-Type: application/json
+
+{ "percent": 5 }
+
+### Raise above the limit (400 validation problem)
+POST {{host}}/api/employees/2/raise
+Content-Type: application/json
+
+{ "percent": 80 }
+
+### ---------- Departments ----------
+
+### List departments (200)
+GET {{host}}/api/departments
+
+### Cost against budget (200)
+GET {{host}}/api/departments/1/cost
+
+### Create a department (201)
+POST {{host}}/api/departments
+Content-Type: application/json
+
+{ "name": "Finance", "code": "FIN", "annualBudget": 300000 }
+
+### Duplicate department name (409)
+POST {{host}}/api/departments
+Content-Type: application/json
+
+{ "name": "Engineering", "code": "ENG2", "annualBudget": 1 }
+
+### Update a department (204)
+PUT {{host}}/api/departments/3
+Content-Type: application/json
+
+{ "name": "People", "annualBudget": 130000 }
+
+### Delete a department that still has staff (409)
+DELETE {{host}}/api/departments/1
+
+### Delete an employee (204)
+DELETE {{host}}/api/employees/10
+
+### Delete it again (404)
+DELETE {{host}}/api/employees/10

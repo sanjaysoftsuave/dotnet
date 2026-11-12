@@ -12,7 +12,9 @@ Capstone project for the 3-week .NET Engineering Bridge. The domain is **Employe
 |---|---|
 | `src/EmployeeManagement.Domain` | Domain model (employees, departments), repository interfaces with in-memory implementations, organisation rules, LINQ queries, async CSV importer |
 | `src/EmployeeManagement.ConsoleApp` | Thin console shell: argument parsing, cancellation, report formatting |
+| `src/EmployeeManagement.Api` | ASP.NET Core Web API (Week 2) |
 | `tests/EmployeeManagement.Domain.Tests` | xUnit tests (normal, boundary, invalid and regression) |
+| `tests/EmployeeManagement.Api.Tests` | API tests (validation, mapping) |
 | `data/employees.csv` | Sample input (the last row is invalid on purpose) |
 | `docs/week1` | Daily notes |
 
@@ -38,6 +40,16 @@ dotnet run --project src/EmployeeManagement.ConsoleApp -- linq
 
 Invalid rows are skipped and reported on stderr. Ctrl+C cancels loading.
 Exit codes: `0` ok, `1` bad input, `2` file not found, `3` cancelled.
+
+## Run the Web API
+
+```bash
+dotnet run --project src/EmployeeManagement.Api --launch-profile http
+```
+
+- Swagger UI: http://localhost:5006/swagger
+- OpenAPI document: http://localhost:5006/openapi/v1.json
+- Example requests: [src/EmployeeManagement.Api/EmployeeManagement.Api.http](src/EmployeeManagement.Api/EmployeeManagement.Api.http)
 
 ## Test
 
@@ -96,3 +108,7 @@ Input file 'missing.csv' was not found.
 - Day 3: [LINQ queries with inputs, outputs and complexity](docs/week1/day3-linq-queries.md)
 - Day 4: [Testing, async and tooling](docs/week1/day4-testing-and-async.md) and the [build/test log](docs/week1/day4-build-test-log.txt)
 - Day 5: [Gate 1 walkthrough, defect fix and test strategy](docs/week1/day5-gate1-walkthrough.md)
+
+### Week 2
+
+- Day 6: [REST API, status codes, request lifecycle](docs/week2/day6-rest-api.md)
