@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using EmployeeManagement.Domain.Departments;
 
-namespace EmployeeManagement.Api.Contracts;
+namespace EmployeeManagement.Application.Departments;
 
 public sealed class CreateDepartmentRequest
 {
@@ -26,3 +27,9 @@ public sealed class UpdateDepartmentRequest
 public sealed record DepartmentResponse(int Id, string Name, string Code, decimal AnnualBudget, int? HeadEmployeeId);
 
 public sealed record DepartmentCostResponse(int DepartmentId, string Department, int HeadCount, decimal TotalCost, decimal Budget, bool IsOverBudget);
+
+public static class DepartmentMappings
+{
+    public static DepartmentResponse ToResponse(this Department department) =>
+        new(department.Id, department.Name, department.Code, department.AnnualBudget, department.HeadEmployeeId);
+}

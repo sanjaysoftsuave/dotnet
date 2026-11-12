@@ -1,7 +1,6 @@
-using EmployeeManagement.Api.Configuration;
+using EmployeeManagement.Application.Employees;
 using EmployeeManagement.Api.Services;
-using EmployeeManagement.Domain.Repositories;
-using EmployeeManagement.Domain.Services;
+using EmployeeManagement.Application.Departments;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -20,6 +19,7 @@ public sealed class ServiceLifetimeTests : IDisposable
             .Build();
 
         _provider = new ServiceCollection()
+            .AddLogging()
             .AddEmployeeManagement(configuration)
             .BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true });
     }
@@ -31,8 +31,8 @@ public sealed class ServiceLifetimeTests : IDisposable
         using var second = _provider.CreateScope();
 
         Assert.Same(
-            first.ServiceProvider.GetRequiredService<IEmployeeRepository>(),
-            second.ServiceProvider.GetRequiredService<IEmployeeRepository>());
+            first.ServiceProvider.GetRequiredService<TimeProvider>(),
+            second.ServiceProvider.GetRequiredService<TimeProvider>());
     }
 
     [Fact]
@@ -41,9 +41,9 @@ public sealed class ServiceLifetimeTests : IDisposable
         using var first = _provider.CreateScope();
         using var second = _provider.CreateScope();
 
-        var a = first.ServiceProvider.GetRequiredService<OrganizationService>();
-        var b = first.ServiceProvider.GetRequiredService<OrganizationService>();
-        var c = second.ServiceProvider.GetRequiredService<OrganizationService>();
+        var a = first.ServiceProvider.GetRequiredService<IDepartmentService>();
+        var b = first.ServiceProvider.GetRequiredService<IDepartmentService>();
+        var c = second.ServiceProvider.GetRequiredService<IDepartmentService>();
 
         Assert.Same(a, b);
         Assert.NotSame(a, c);

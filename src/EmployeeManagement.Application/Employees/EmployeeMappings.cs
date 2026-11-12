@@ -1,11 +1,9 @@
-using EmployeeManagement.Api.Contracts;
-using EmployeeManagement.Domain.Departments;
 using EmployeeManagement.Domain.Employees;
 
-namespace EmployeeManagement.Api.Mapping;
+namespace EmployeeManagement.Application.Employees;
 
 // Manual mapping: explicit, easy to debug, and the compiler catches renamed properties.
-public static class ContractMappings
+public static class EmployeeMappings
 {
     public static EmployeeResponse ToResponse(this Employee employee)
     {
@@ -45,10 +43,4 @@ public static class ContractMappings
         employee.AssignManager(request.ManagerId);
         return employee;
     }
-
-    public static DepartmentResponse ToResponse(this Department department) =>
-        new(department.Id, department.Name, department.Code, department.AnnualBudget, department.HeadEmployeeId);
-
-    public static Department ToDepartment(this CreateDepartmentRequest request) =>
-        new(request.Name, request.Code, request.AnnualBudget);
 }

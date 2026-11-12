@@ -1,11 +1,17 @@
-using EmployeeManagement.Api.Configuration;
-using EmployeeManagement.Api.Contracts;
-using EmployeeManagement.Api.Mapping;
-using EmployeeManagement.Domain.Common;
+using System.ComponentModel.DataAnnotations;
+using EmployeeManagement.Application.Common;
 using EmployeeManagement.Domain.Employees;
 using Microsoft.Extensions.Options;
 
-namespace EmployeeManagement.Api.Services;
+namespace EmployeeManagement.Application.Employees;
+
+public sealed class HiringOptions
+{
+    public const string SectionName = "Hiring";
+
+    [Range(0, 365)]
+    public int MaxDaysInFuture { get; set; } = 90;
+}
 
 public interface IEmployeeFactory
 {
@@ -22,7 +28,7 @@ public sealed class EmployeeFactory(TimeProvider time, IOptions<HiringOptions> o
 
         if (request.HireDate > latest)
         {
-            throw new DomainException($"Hire date cannot be later than {latest:yyyy-MM-dd}.");
+            throw new RequestValidationException(nameof(request.HireDate), $"Hire date cannot be later than {latest:yyyy-MM-dd}.");
         }
 
         return request.ToEmployee();

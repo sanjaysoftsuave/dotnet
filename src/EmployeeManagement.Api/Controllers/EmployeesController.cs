@@ -1,107 +1,59 @@
-using EmployeeManagement.Api.Contracts;
-using EmployeeManagement.Api.Mapping;
-using EmployeeManagement.Api.Services;
-using EmployeeManagement.Domain.Common;
-using EmployeeManagement.Domain.Employees;
-using EmployeeManagement.Domain.Repositories;
-using EmployeeManagement.Domain.Services;
+using EmployeeManagement.Application.Employees;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeManagement.Api.Controllers;
 
+// HTTP only: routing, binding and choosing the success status code. Rules live in IEmployeeService,
+// and failures are thrown as exceptions that GlobalExceptionHandler maps to ProblemDetails.
 [ApiController]
 [Route("api/employees")]
 [Produces("application/json")]
-public sealed class EmployeesController(
-    IEmployeeRepository employees,
-    OrganizationService organization,
-    IEmployeeFactory factory,
-    ILogger<EmployeesController> logger) : ControllerBase
+public sealed class EmployeesController(IEmployeeService employees) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType<IReadOnlyList<EmployeeResponse>>(StatusCodes.Status200OK)]
-    public ActionResult<IReadOnlyList<EmployeeResponse>> GetAll() =>
-        Ok(employees.GetAll().Select(e => e.ToResponse()).ToList());
+    public async Task<ActionResult<IReadOnlyList<EmployeeResponse>>> GetAll(CancellationToken cancellationToken) =>
+        Ok(await employees.ListAsync(cancellationToken));
 
     [HttpGet("{id:int}")]
     [ProducesResponseType<EmployeeResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
-    public ActionResult<EmployeeResponse> GetById(int id) =>
-        employees.GetById(id) is { } employee ? Ok(employee.ToResponse()) : NotFound();
+    public async Task<ActionResult<EmployeeResponse>> GetById(int id, CancellationToken cancellationToken) =>
+        Ok(await employees.GetAsync(id, cancellationToken));
 
     [HttpPost]
     [ProducesResponseType<EmployeeResponse>(StatusCodes.Status201Created)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
-    public ActionResult<EmployeeResponse> Create(CreateEmployeeRequest request)
+    public async Task<ActionResult<EmployeeResponse>> Create(CreateEmployeeRequest request, CancellationToken cancellationToken)
     {
-        try
-        {
-            Employee employee = organization.Hire(factory.Create(request));
-            logger.LogInformation("Hired employee {EmployeeId} into department {DepartmentId}", employee.Id, employee.DepartmentId);
-            return CreatedAtAction(nameof(GetById), new { id = employee.Id }, employee.ToResponse());
-        }
-        catch (Exception ex) when (ex is DomainException or ArgumentException)
-        {
-            return Problem(statusCode: StatusCodes.Status400BadRequest, title: "The request breaks a business rule.", detail: ex.Message);
-        }
+        EmployeeResponse created = await employees.CreateAsync(request, cancellationToken);
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
     [HttpPut("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
-    public IActionResult Update(int id, UpdateEmployeeRequest request)
+    public async Task<IActionResult> Update(int id, UpdateEmployeeRequest request, CancellationToken cancellationToken)
     {
-        if (employees.GetById(id) is not { } employee)
-        {
-            return NotFound();
-        }
-
-        try
-        {
-            organization.Transfer(id, request.DepartmentId);
-            organization.AssignManager(id, request.ManagerId);
-            employee.Rename(request.FirstName, request.LastName);
-            employee.ChangeEmail(request.Email);
-            return NoContent();
-        }
-        catch (Exception ex) when (ex is DomainException or ArgumentException)
-        {
-            return Problem(statusCode: StatusCodes.Status400BadRequest, title: "The request breaks a business rule.", detail: ex.Message);
-        }
+        await employees.UpdateAsync(id, request, cancellationToken);
+        return NoContent();
     }
 
     [HttpPost("{id:int}/raise")]
     [ProducesResponseType<EmployeeResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
-    public ActionResult<EmployeeResponse> GiveRaise(int id, RaiseRequest request)
-    {
-        switch (employees.GetById(id))
-        {
-            case null:
-                return NotFound();
-            case FullTimeEmployee employee:
-                employee.GiveRaise(request.Percent);
-                logger.LogInformation("Gave employee {EmployeeId} a raise of {Percent}%", id, request.Percent);
-                return Ok(employee.ToResponse());
-            default:
-                return Problem(statusCode: StatusCodes.Status400BadRequest, title: "The request breaks a business rule.",
-                    detail: "Only full-time employees can receive a raise.");
-        }
-    }
+    public async Task<ActionResult<EmployeeResponse>> GiveRaise(int id, RaiseRequest request, CancellationToken cancellationToken) =>
+        Ok(await employees.GiveRaiseAsync(id, request, cancellationToken));
 
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
-    public IActionResult Delete(int id)
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
-        if (!employees.Remove(id))
-        {
-            return NotFound();
-        }
-
-        logger.LogInformation("Removed employee {EmployeeId}", id);
+        await employees.DeleteAsync(id, cancellationToken);
         return NoContent();
     }
 }

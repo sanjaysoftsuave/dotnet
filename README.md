@@ -12,9 +12,12 @@ Capstone project for the 3-week .NET Engineering Bridge. The domain is **Employe
 |---|---|
 | `src/EmployeeManagement.Domain` | Domain model (employees, departments), repository interfaces with in-memory implementations, organisation rules, LINQ queries, async CSV importer |
 | `src/EmployeeManagement.ConsoleApp` | Thin console shell: argument parsing, cancellation, report formatting |
-| `src/EmployeeManagement.Api` | ASP.NET Core Web API (Week 2) |
+| `src/EmployeeManagement.Api` | ASP.NET Core Web API: controllers, middleware, error handling, composition root |
+| `src/EmployeeManagement.Application` | Use cases: DTOs, validation, services, repository interfaces |
+| `src/EmployeeManagement.Infrastructure` | Repository implementations |
 | `tests/EmployeeManagement.Domain.Tests` | xUnit tests (normal, boundary, invalid and regression) |
-| `tests/EmployeeManagement.Api.Tests` | API tests (validation, mapping) |
+| `tests/EmployeeManagement.Application.Tests` | Service, validation and mapping tests |
+| `tests/EmployeeManagement.Api.Tests` | Middleware, error handling and DI tests |
 | `data/employees.csv` | Sample input (the last row is invalid on purpose) |
 | `docs/week1` | Daily notes |
 
@@ -113,3 +116,4 @@ Input file 'missing.csv' was not found.
 
 - Day 6: [REST API, status codes, request lifecycle](docs/week2/day6-rest-api.md)
 - Day 7: [DI lifetimes, middleware pipeline, configuration and logging](docs/week2/day7-di-and-middleware.md)
+- Day 8: [Layered architecture, validation and error handling](docs/week2/day8-layered-architecture.md)

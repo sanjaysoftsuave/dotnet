@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 namespace EmployeeManagement.Api.Configuration;
 
 // Options pattern: strongly typed settings bound from configuration and validated at startup.
-
 public sealed class RequestLoggingOptions
 {
     public const string SectionName = "RequestLogging";
@@ -13,12 +12,4 @@ public sealed class RequestLoggingOptions
 
     [Required, RegularExpression("^[A-Za-z0-9-]+$")]
     public string CorrelationHeaderName { get; set; } = "X-Correlation-Id";
-}
-
-public sealed class HiringOptions
-{
-    public const string SectionName = "Hiring";
-
-    [Range(0, 365)]
-    public int MaxDaysInFuture { get; set; } = 90;
 }

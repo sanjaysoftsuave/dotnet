@@ -7,14 +7,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 builder.Services.AddEmployeeManagement(builder.Configuration);
 
 var app = builder.Build();
 
-// Outermost first: request logging wraps everything after it, so it sees the final status and timing.
-app.UseMiddleware<RequestLoggingMiddleware>();
+// Order matters: each middleware wraps everything registered after it.
+app.UseMiddleware<RequestLoggingMiddleware>(); // 1. outermost, so it logs the final status code
+app.UseExceptionHandler();                      // 2. exceptions → ProblemDetails (GlobalExceptionHandler)
+app.UseStatusCodePages();                       // 3. empty 4xx responses (e.g. unknown routes) → ProblemDetails
 
 if (app.Environment.IsDevelopment())
 {

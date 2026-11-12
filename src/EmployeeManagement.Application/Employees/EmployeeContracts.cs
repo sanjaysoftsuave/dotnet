@@ -1,9 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using EmployeeManagement.Domain.Employees;
 
-namespace EmployeeManagement.Api.Contracts;
+namespace EmployeeManagement.Application.Employees;
 
 // DTOs: the shape clients send and receive. They never expose domain entities directly.
+// Attributes check the shape of a request; rules that need data (does the department exist?) live in the services.
 
 public sealed class CreateEmployeeRequest : IValidatableObject
 {

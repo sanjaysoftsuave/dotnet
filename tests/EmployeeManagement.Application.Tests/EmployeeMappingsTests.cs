@@ -1,10 +1,9 @@
-using EmployeeManagement.Api.Contracts;
-using EmployeeManagement.Api.Mapping;
+using EmployeeManagement.Application.Employees;
 using EmployeeManagement.Domain.Employees;
 
-namespace EmployeeManagement.Api.Tests;
+namespace EmployeeManagement.Application.Tests;
 
-public class ContractMappingsTests
+public class EmployeeMappingsTests
 {
     [Fact]
     public void ToResponse_Contractor_FillsContractFieldsOnly()

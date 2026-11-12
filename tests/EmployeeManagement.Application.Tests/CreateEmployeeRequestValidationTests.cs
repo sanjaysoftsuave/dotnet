@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
-using EmployeeManagement.Api.Contracts;
+using EmployeeManagement.Application.Employees;
 using EmployeeManagement.Domain.Employees;
 
-namespace EmployeeManagement.Api.Tests;
+namespace EmployeeManagement.Application.Tests;
 
 public class CreateEmployeeRequestValidationTests
 {

@@ -144,3 +144,15 @@ DELETE {{host}}/api/employees/10
 
 ### Delete it again (404)
 DELETE {{host}}/api/employees/10
+
+### Delete someone who still manages others (409)
+DELETE {{host}}/api/employees/1
+
+### Employee as their own manager (400 validation problem)
+PUT {{host}}/api/employees/3
+Content-Type: application/json
+
+{ "firstName": "Meera", "lastName": "Nair", "departmentId": 1, "managerId": 3 }
+
+### Unknown route (404 ProblemDetails from UseStatusCodePages)
+GET {{host}}/api/does-not-exist

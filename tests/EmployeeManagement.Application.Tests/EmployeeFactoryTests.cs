@@ -1,12 +1,10 @@
-using EmployeeManagement.Api.Configuration;
-using EmployeeManagement.Api.Contracts;
-using EmployeeManagement.Api.Services;
-using EmployeeManagement.Domain.Common;
+using EmployeeManagement.Application.Employees;
+using EmployeeManagement.Application.Common;
 using EmployeeManagement.Domain.Employees;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
 
-namespace EmployeeManagement.Api.Tests;
+namespace EmployeeManagement.Application.Tests;
 
 public class EmployeeFactoryTests
 {
@@ -30,13 +28,13 @@ public class EmployeeFactoryTests
     }
 
     [Fact]
-    public void Create_HireDateBeyondTheLimit_ThrowsDomainException()
+    public void Create_HireDateBeyondTheLimit_ReportsHireDateError()
     {
         // Act
-        var ex = Assert.Throws<DomainException>(() => _factory.Create(Request(new DateOnly(2026, 12, 13))));
+        var ex = Assert.Throws<RequestValidationException>(() => _factory.Create(Request(new DateOnly(2026, 12, 13))));
 
         // Assert
-        Assert.Contains("2026-12-12", ex.Message);
+        Assert.Contains("2026-12-12", Assert.Single(ex.Errors["HireDate"]));
     }
 
     [Fact]
