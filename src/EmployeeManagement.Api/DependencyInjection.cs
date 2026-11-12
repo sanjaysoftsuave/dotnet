@@ -1,5 +1,6 @@
 using EmployeeManagement.Api.Configuration;
 using EmployeeManagement.Api.ErrorHandling;
+using EmployeeManagement.Api.Security;
 using EmployeeManagement.Api.Services;
 using EmployeeManagement.Application;
 using EmployeeManagement.Infrastructure;
@@ -13,6 +14,7 @@ public static class DependencyInjection
     {
         services.AddApplication(configuration);
         services.AddInfrastructure(configuration);
+        services.AddJwtSecurity(configuration);
 
         services.AddOptions<RequestLoggingOptions>()
             .Bind(configuration.GetSection(RequestLoggingOptions.SectionName))

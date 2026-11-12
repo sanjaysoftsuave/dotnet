@@ -24,6 +24,7 @@ public sealed class ServiceLifetimeTests : IDisposable
 
         _provider = new ServiceCollection()
             .AddLogging()
+            .AddRouting()
             .AddEmployeeManagement(configuration)
             .BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true });
     }

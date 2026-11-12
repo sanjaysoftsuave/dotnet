@@ -1,4 +1,6 @@
 using EmployeeManagement.Application.Employees;
+using EmployeeManagement.Api.Security;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeManagement.Api.Controllers;
@@ -8,6 +10,7 @@ namespace EmployeeManagement.Api.Controllers;
 [ApiController]
 [Route("api/employees")]
 [Produces("application/json")]
+[Authorize(Policy = Policies.CanReadData)]
 public sealed class EmployeesController(IEmployeeService employees) : ControllerBase
 {
     [HttpGet]
@@ -24,6 +27,7 @@ public sealed class EmployeesController(IEmployeeService employees) : Controller
         Ok(await employees.GetAsync(id, cancellationToken));
 
     [HttpPost]
+    [Authorize(Policy = Policies.CanManageEmployees)]
     [ProducesResponseType<EmployeeResponse>(StatusCodes.Status201Created)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<EmployeeResponse>> Create(CreateEmployeeRequest request, CancellationToken cancellationToken)
@@ -33,6 +37,7 @@ public sealed class EmployeesController(IEmployeeService employees) : Controller
     }
 
     [HttpPut("{id:int}")]
+    [Authorize(Policy = Policies.CanManageEmployees)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
@@ -43,6 +48,7 @@ public sealed class EmployeesController(IEmployeeService employees) : Controller
     }
 
     [HttpPost("{id:int}/raise")]
+    [Authorize(Policy = Policies.CanManageEmployees)]
     [ProducesResponseType<EmployeeResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
@@ -50,6 +56,7 @@ public sealed class EmployeesController(IEmployeeService employees) : Controller
         Ok(await employees.GiveRaiseAsync(id, request, cancellationToken));
 
     [HttpDelete("{id:int}")]
+    [Authorize(Policy = Policies.CanManageEmployees)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]

@@ -1,25 +1,77 @@
 @host = http://localhost:5006
 
+### ---------- Tokens (Development only demo endpoint) ----------
+
+# @name viewer
+POST {{host}}/api/auth/token
+Content-Type: application/json
+
+{ "userName": "vera", "role": "Viewer" }
+
+###
+# @name manager
+POST {{host}}/api/auth/token
+Content-Type: application/json
+
+{ "userName": "manoj", "role": "HrManager" }
+
+###
+# @name admin
+POST {{host}}/api/auth/token
+Content-Type: application/json
+
+{ "userName": "anita", "role": "HrAdmin" }
+
+### Unknown role (400)
+POST {{host}}/api/auth/token
+Content-Type: application/json
+
+{ "userName": "x", "role": "SuperUser" }
+
+@viewerToken = {{viewer.response.body.$.accessToken}}
+@managerToken = {{manager.response.body.$.accessToken}}
+@adminToken = {{admin.response.body.$.accessToken}}
+
+### ---------- Authentication and authorization outcomes ----------
+
+### No token (401 + WWW-Authenticate: Bearer)
+GET {{host}}/api/employees/1
+
+### Viewer can read (200)
+GET {{host}}/api/employees/1
+Authorization: Bearer {{viewerToken}}
+
+### Viewer cannot create (403)
+POST {{host}}/api/employees
+Authorization: Bearer {{viewerToken}}
+Content-Type: application/json
+
+{ "firstName": "Priya", "lastName": "Shah", "departmentId": 1, "hireDate": "2026-11-02", "employmentType": "FullTime", "annualSalary": 110000 }
+
+### HrManager cannot create departments (403)
+POST {{host}}/api/departments
+Authorization: Bearer {{managerToken}}
+Content-Type: application/json
+
+{ "name": "Finance", "code": "FIN", "annualBudget": 300000 }
+
 ### ---------- Employees: success ----------
 
 ### List employees, first page of 20 (200)
 GET {{host}}/api/employees
-Accept: application/json
+Authorization: Bearer {{viewerToken}}
 
 ### Filter, sort and page (200)
 GET {{host}}/api/employees?departmentId=1&search=a&sortBy=HireDate&sortDirection=Desc&page=1&pageSize=2
+Authorization: Bearer {{viewerToken}}
 
 ### Contractors hired in 2024 or later (200)
 GET {{host}}/api/employees?employmentType=Contractor&hiredFrom=2024-01-01
-
-### Invalid paging (400 validation problem)
-GET {{host}}/api/employees?page=0&pageSize=500
-
-### Get one employee (200)
-GET {{host}}/api/employees/1
+Authorization: Bearer {{viewerToken}}
 
 ### Create a full-time employee (201 + Location header)
 POST {{host}}/api/employees
+Authorization: Bearer {{managerToken}}
 Content-Type: application/json
 
 {
@@ -35,6 +87,7 @@ Content-Type: application/json
 
 ### Create a contractor (201)
 POST {{host}}/api/employees
+Authorization: Bearer {{managerToken}}
 Content-Type: application/json
 
 {
@@ -50,18 +103,14 @@ Content-Type: application/json
 
 ### Replace an employee's editable fields (204)
 PUT {{host}}/api/employees/3
+Authorization: Bearer {{managerToken}}
 Content-Type: application/json
 
-{
-  "firstName": "Meera",
-  "lastName": "Nair",
-  "email": "meera.nair@example.com",
-  "departmentId": 1,
-  "managerId": 2
-}
+{ "firstName": "Meera", "lastName": "Nair", "email": "meera.nair@example.com", "departmentId": 1, "managerId": 2 }
 
 ### Give a raise (200)
 POST {{host}}/api/employees/2/raise
+Authorization: Bearer {{managerToken}}
 Content-Type: application/json
 
 { "percent": 5 }
@@ -70,98 +119,101 @@ Content-Type: application/json
 
 ### Unknown id (404)
 GET {{host}}/api/employees/999
+Authorization: Bearer {{viewerToken}}
+
+### Invalid paging (400 validation problem)
+GET {{host}}/api/employees?page=0&pageSize=500
+Authorization: Bearer {{viewerToken}}
 
 ### Missing required fields and bad email (400 validation problem)
 POST {{host}}/api/employees
+Authorization: Bearer {{managerToken}}
 Content-Type: application/json
 
-{
-  "firstName": "",
-  "email": "not-an-email",
-  "departmentId": 1,
-  "employmentType": "FullTime"
-}
+{ "firstName": "", "email": "not-an-email", "departmentId": 1, "employmentType": "FullTime" }
 
 ### Contractor without contract details (400, cross-field validation)
 POST {{host}}/api/employees
+Authorization: Bearer {{managerToken}}
 Content-Type: application/json
 
-{
-  "firstName": "Omar",
-  "lastName": "Haddad",
-  "departmentId": 4,
-  "hireDate": "2026-11-02",
-  "employmentType": "Contractor"
-}
+{ "firstName": "Omar", "lastName": "Haddad", "departmentId": 4, "hireDate": "2026-11-02", "employmentType": "Contractor" }
 
-### Department does not exist (400, business rule)
+### Department and manager do not exist (400, both fields reported)
 POST {{host}}/api/employees
+Authorization: Bearer {{managerToken}}
 Content-Type: application/json
 
-{
-  "firstName": "Priya",
-  "lastName": "Shah",
-  "departmentId": 99,
-  "hireDate": "2026-11-02",
-  "employmentType": "FullTime",
-  "annualSalary": 110000
-}
+{ "firstName": "Priya", "lastName": "Shah", "departmentId": 99, "managerId": 77, "hireDate": "2026-11-02", "employmentType": "FullTime", "annualSalary": 110000 }
+
+### Employee as their own manager (400)
+PUT {{host}}/api/employees/3
+Authorization: Bearer {{managerToken}}
+Content-Type: application/json
+
+{ "firstName": "Meera", "lastName": "Nair", "departmentId": 1, "managerId": 3 }
 
 ### Raise for a contractor (400, business rule)
 POST {{host}}/api/employees/9/raise
+Authorization: Bearer {{managerToken}}
 Content-Type: application/json
 
 { "percent": 5 }
 
 ### Raise above the limit (400 validation problem)
 POST {{host}}/api/employees/2/raise
+Authorization: Bearer {{managerToken}}
 Content-Type: application/json
 
 { "percent": 80 }
+
+### Delete someone who still manages others (409)
+DELETE {{host}}/api/employees/1
+Authorization: Bearer {{managerToken}}
+
+### Delete an employee (204), then again (404)
+DELETE {{host}}/api/employees/10
+Authorization: Bearer {{managerToken}}
+
+###
+DELETE {{host}}/api/employees/10
+Authorization: Bearer {{managerToken}}
 
 ### ---------- Departments ----------
 
 ### List departments (200)
 GET {{host}}/api/departments
+Authorization: Bearer {{viewerToken}}
 
 ### Cost against budget (200)
 GET {{host}}/api/departments/1/cost
+Authorization: Bearer {{viewerToken}}
 
 ### Create a department (201)
 POST {{host}}/api/departments
+Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 { "name": "Finance", "code": "FIN", "annualBudget": 300000 }
 
 ### Duplicate department name (409)
 POST {{host}}/api/departments
+Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 { "name": "Engineering", "code": "ENG2", "annualBudget": 1 }
 
 ### Update a department (204)
 PUT {{host}}/api/departments/3
+Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 { "name": "People", "annualBudget": 130000 }
 
 ### Delete a department that still has staff (409)
 DELETE {{host}}/api/departments/1
+Authorization: Bearer {{adminToken}}
 
-### Delete an employee (204)
-DELETE {{host}}/api/employees/10
-
-### Delete it again (404)
-DELETE {{host}}/api/employees/10
-
-### Delete someone who still manages others (409)
-DELETE {{host}}/api/employees/1
-
-### Employee as their own manager (400 validation problem)
-PUT {{host}}/api/employees/3
-Content-Type: application/json
-
-{ "firstName": "Meera", "lastName": "Nair", "departmentId": 1, "managerId": 3 }
-
-### Unknown route (404 ProblemDetails from UseStatusCodePages)
+### Unknown route (404 ProblemDetails)
 GET {{host}}/api/does-not-exist
+Authorization: Bearer {{viewerToken}}

@@ -1,0 +1,30 @@
+# Captured 2026-11-12 18:52 with .NET SDK 10.0.404
+
+> dotnet build
+  Determining projects to restore...
+  Restored src\EmployeeManagement.Api\EmployeeManagement.Api.csproj (in 1.25 sec).
+  Restored tests\EmployeeManagement.Api.Tests\EmployeeManagement.Api.Tests.csproj (in 1.25 sec).
+  7 of 9 projects are up-to-date for restore.
+  EmployeeManagement.Domain -> src\EmployeeManagement.Domain\bin\Debug\net10.0\EmployeeManagement.Domain.dll
+  EmployeeManagement.ConsoleApp -> src\EmployeeManagement.ConsoleApp\bin\Debug\net10.0\EmployeeManagement.ConsoleApp.dll
+  EmployeeManagement.Application -> src\EmployeeManagement.Application\bin\Debug\net10.0\EmployeeManagement.Application.dll
+  EmployeeManagement.Domain.Tests -> tests\EmployeeManagement.Domain.Tests\bin\Debug\net10.0\EmployeeManagement.Domain.Tests.dll
+  EmployeeManagement.Infrastructure -> src\EmployeeManagement.Infrastructure\bin\Debug\net10.0\EmployeeManagement.Infrastructure.dll
+  EmployeeManagement.Application.Tests -> tests\EmployeeManagement.Application.Tests\bin\Debug\net10.0\EmployeeManagement.Application.Tests.dll
+  EmployeeManagement.Infrastructure.Tests -> tests\EmployeeManagement.Infrastructure.Tests\bin\Debug\net10.0\EmployeeManagement.Infrastructure.Tests.dll
+  EmployeeManagement.Api -> src\EmployeeManagement.Api\bin\Debug\net10.0\EmployeeManagement.Api.dll
+  EmployeeManagement.Api.Tests -> tests\EmployeeManagement.Api.Tests\bin\Debug\net10.0\EmployeeManagement.Api.Tests.dll
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+Time Elapsed 00:00:10.18
+
+> dotnet test --no-build
+Test run for tests\EmployeeManagement.Domain.Tests\bin\Debug\net10.0\EmployeeManagement.Domain.Tests.dll (.NETCoreApp,Version=v10.0)
+Test run for tests\EmployeeManagement.Api.Tests\bin\Debug\net10.0\EmployeeManagement.Api.Tests.dll (.NETCoreApp,Version=v10.0)
+Test run for tests\EmployeeManagement.Application.Tests\bin\Debug\net10.0\EmployeeManagement.Application.Tests.dll (.NETCoreApp,Version=v10.0)
+Test run for tests\EmployeeManagement.Infrastructure.Tests\bin\Debug\net10.0\EmployeeManagement.Infrastructure.Tests.dll (.NETCoreApp,Version=v10.0)
+Passed!  - Failed:     0, Passed:    53, Skipped:     0, Total:    53, Duration: 68 ms - EmployeeManagement.Domain.Tests.dll (net10.0)
+Passed!  - Failed:     0, Passed:    40, Skipped:     0, Total:    40, Duration: 68 ms - EmployeeManagement.Application.Tests.dll (net10.0)
+Passed!  - Failed:     0, Passed:     5, Skipped:     0, Total:     5, Duration: 1 s - EmployeeManagement.Infrastructure.Tests.dll (net10.0)
+Passed!  - Failed:     0, Passed:    44, Skipped:     0, Total:    44, Duration: 1 s - EmployeeManagement.Api.Tests.dll (net10.0)

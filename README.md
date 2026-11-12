@@ -47,6 +47,14 @@ Exit codes: `0` ok, `1` bad input, `2` file not found, `3` cancelled.
 
 ## Run the Web API
 
+One-time setup: the JWT signing key is a secret, so it is not in the repository. Store any random value of at least 32 characters in your user secrets:
+
+```bash
+dotnet user-secrets set "Jwt:SigningKey" "<at least 32 random characters>" --project src/EmployeeManagement.Api
+```
+
+PowerShell can generate one: `[Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(48))`. On servers, set the `Jwt__SigningKey` environment variable instead. Without a key the API refuses to start and says why.
+
 ```bash
 dotnet run --project src/EmployeeManagement.Api --launch-profile http
 ```
@@ -65,6 +73,17 @@ dotnet ef database update -p src/EmployeeManagement.Infrastructure -s src/Employ
 ```
 
 Delete the `.db` file to start fresh. Details: [Day 9 notes](docs/week2/day9-ef-core.md).
+
+### Authentication
+
+All endpoints need a bearer token. In Development, get one from `POST /api/auth/token` with `{ "userName": "anita", "role": "HrAdmin" }`. The roles are `Viewer` (read), `HrManager` (plus employee changes) and `HrAdmin` (plus department changes). In Swagger UI, use **Authorize** and paste the token. The `.http` file fetches tokens for you. Details: [Day 10 notes](docs/week2/day10-security.md).
+
+### Known limitations
+
+- The token endpoint is a Development-only stand-in for a real identity provider (no passwords, no refresh tokens).
+- SQLite stores `decimal` as text, so cost totals are computed in C# rather than with SQL `SUM`. Switch to SQL Server or PostgreSQL for SQL-side money aggregates.
+- No optimistic concurrency token yet, so the last write wins when two clients edit the same employee.
+- Department `HeadEmployeeId` is not a foreign key, and there is no endpoint to appoint a head yet.
 
 ## Test
 
@@ -130,3 +149,4 @@ Input file 'missing.csv' was not found.
 - Day 7: [DI lifetimes, middleware pipeline, configuration and logging](docs/week2/day7-di-and-middleware.md)
 - Day 8: [Layered architecture, validation and error handling](docs/week2/day8-layered-architecture.md)
 - Day 9: [EF Core, migrations, querying, tracking and N+1](docs/week2/day9-ef-core.md)
+- Day 10: [Authentication, authorization, 401 vs 403, secrets, and the Gate 2 checklist](docs/week2/day10-security.md) and the [build/test log](docs/week2/build-test-log.txt)

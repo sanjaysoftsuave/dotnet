@@ -1,4 +1,6 @@
 using EmployeeManagement.Application.Departments;
+using EmployeeManagement.Api.Security;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeManagement.Api.Controllers;
@@ -6,6 +8,7 @@ namespace EmployeeManagement.Api.Controllers;
 [ApiController]
 [Route("api/departments")]
 [Produces("application/json")]
+[Authorize(Policy = Policies.CanReadData)]
 public sealed class DepartmentsController(IDepartmentService departments) : ControllerBase
 {
     [HttpGet]
@@ -26,6 +29,7 @@ public sealed class DepartmentsController(IDepartmentService departments) : Cont
         Ok(await departments.GetCostAsync(id, cancellationToken));
 
     [HttpPost]
+    [Authorize(Policy = Policies.CanManageDepartments)]
     [ProducesResponseType<DepartmentResponse>(StatusCodes.Status201Created)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
@@ -36,6 +40,7 @@ public sealed class DepartmentsController(IDepartmentService departments) : Cont
     }
 
     [HttpPut("{id:int}")]
+    [Authorize(Policy = Policies.CanManageDepartments)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
@@ -47,6 +52,7 @@ public sealed class DepartmentsController(IDepartmentService departments) : Cont
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Policy = Policies.CanManageDepartments)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
