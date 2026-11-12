@@ -1,0 +1,10 @@
+Id,FirstName,LastName,Email,Department,Salary,HireDate,ManagerId
+1,Asha,Raman,asha.raman@example.com,Engineering,185000,2018-04-02,
+2,Vikram,Iyer,vikram.iyer@example.com,Engineering,142000,2020-07-15,1
+3,Meera,Nair,,Engineering,98000,2023-01-09,2
+4,Rahul,Menon,rahul.menon@example.com,Sales,76000,2021-11-01,6
+5,Divya,Krishnan,divya.k@example.com,HR,88000,2019-03-18,
+6,Arjun,Pillai,arjun.pillai@example.com,Sales,121000,2017-09-25,
+7,Kavya,Suresh,kavya.suresh@example.com,Support,64000,2024-02-12,8
+8,Nikhil,Das,nikhil.das@example.com,Support,90000,2016-06-30,
+9,Bad,Row,bad@example.com,Sales,not-a-number,2022-01-01,
