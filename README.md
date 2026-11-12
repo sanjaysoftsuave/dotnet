@@ -112,3 +112,4 @@ Input file 'missing.csv' was not found.
 ### Week 2
 
 - Day 6: [REST API, status codes, request lifecycle](docs/week2/day6-rest-api.md)
+- Day 7: [DI lifetimes, middleware pipeline, configuration and logging](docs/week2/day7-di-and-middleware.md)

@@ -1,5 +1,6 @@
 using EmployeeManagement.Api.Contracts;
 using EmployeeManagement.Api.Mapping;
+using EmployeeManagement.Api.Services;
 using EmployeeManagement.Domain.Common;
 using EmployeeManagement.Domain.Employees;
 using EmployeeManagement.Domain.Repositories;
@@ -11,7 +12,11 @@ namespace EmployeeManagement.Api.Controllers;
 [ApiController]
 [Route("api/employees")]
 [Produces("application/json")]
-public sealed class EmployeesController(IEmployeeRepository employees, OrganizationService organization) : ControllerBase
+public sealed class EmployeesController(
+    IEmployeeRepository employees,
+    OrganizationService organization,
+    IEmployeeFactory factory,
+    ILogger<EmployeesController> logger) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType<IReadOnlyList<EmployeeResponse>>(StatusCodes.Status200OK)]
@@ -31,7 +36,8 @@ public sealed class EmployeesController(IEmployeeRepository employees, Organizat
     {
         try
         {
-            Employee employee = organization.Hire(request.ToEmployee());
+            Employee employee = organization.Hire(factory.Create(request));
+            logger.LogInformation("Hired employee {EmployeeId} into department {DepartmentId}", employee.Id, employee.DepartmentId);
             return CreatedAtAction(nameof(GetById), new { id = employee.Id }, employee.ToResponse());
         }
         catch (Exception ex) when (ex is DomainException or ArgumentException)
@@ -77,6 +83,7 @@ public sealed class EmployeesController(IEmployeeRepository employees, Organizat
                 return NotFound();
             case FullTimeEmployee employee:
                 employee.GiveRaise(request.Percent);
+                logger.LogInformation("Gave employee {EmployeeId} a raise of {Percent}%", id, request.Percent);
                 return Ok(employee.ToResponse());
             default:
                 return Problem(statusCode: StatusCodes.Status400BadRequest, title: "The request breaks a business rule.",
@@ -87,5 +94,14 @@ public sealed class EmployeesController(IEmployeeRepository employees, Organizat
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
-    public IActionResult Delete(int id) => employees.Remove(id) ? NoContent() : NotFound();
+    public IActionResult Delete(int id)
+    {
+        if (!employees.Remove(id))
+        {
+            return NotFound();
+        }
+
+        logger.LogInformation("Removed employee {EmployeeId}", id);
+        return NoContent();
+    }
 }
