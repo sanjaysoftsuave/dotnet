@@ -1,3 +1,4 @@
+using EmployeeManagement.Application.Employees;
 using EmployeeManagement.Domain.Departments;
 using EmployeeManagement.Domain.Employees;
 
@@ -9,7 +10,7 @@ namespace EmployeeManagement.Application.Abstractions;
 public interface IEmployeeRepository
 {
     Task<Employee?> GetByIdAsync(int id, CancellationToken cancellationToken);
-    Task<IReadOnlyList<Employee>> ListAsync(CancellationToken cancellationToken);
+    Task<PagedResult<Employee>> ListAsync(EmployeeListQuery query, CancellationToken cancellationToken);
     Task<IReadOnlyList<Employee>> ListByDepartmentAsync(int departmentId, CancellationToken cancellationToken);
     Task<bool> ExistsAsync(int id, CancellationToken cancellationToken);
     Task<bool> AnyInDepartmentAsync(int departmentId, CancellationToken cancellationToken);

@@ -14,12 +14,13 @@ Capstone project for the 3-week .NET Engineering Bridge. The domain is **Employe
 | `src/EmployeeManagement.ConsoleApp` | Thin console shell: argument parsing, cancellation, report formatting |
 | `src/EmployeeManagement.Api` | ASP.NET Core Web API: controllers, middleware, error handling, composition root |
 | `src/EmployeeManagement.Application` | Use cases: DTOs, validation, services, repository interfaces |
-| `src/EmployeeManagement.Infrastructure` | Repository implementations |
+| `src/EmployeeManagement.Infrastructure` | EF Core persistence (SQLite): DbContext, configurations, migrations, repositories |
 | `tests/EmployeeManagement.Domain.Tests` | xUnit tests (normal, boundary, invalid and regression) |
-| `tests/EmployeeManagement.Application.Tests` | Service, validation and mapping tests |
+| `tests/EmployeeManagement.Application.Tests` | Service, validation, mapping and query-filter tests |
+| `tests/EmployeeManagement.Infrastructure.Tests` | Repository tests against real SQLite in memory |
 | `tests/EmployeeManagement.Api.Tests` | Middleware, error handling and DI tests |
 | `data/employees.csv` | Sample input (the last row is invalid on purpose) |
-| `docs/week1` | Daily notes |
+| `docs/week1`, `docs/week2` | Daily notes |
 
 ## Run
 
@@ -53,6 +54,17 @@ dotnet run --project src/EmployeeManagement.Api --launch-profile http
 - Swagger UI: http://localhost:5006/swagger
 - OpenAPI document: http://localhost:5006/openapi/v1.json
 - Example requests: [src/EmployeeManagement.Api/EmployeeManagement.Api.http](src/EmployeeManagement.Api/EmployeeManagement.Api.http)
+
+### Database
+
+SQLite file `src/EmployeeManagement.Api/employees.db`. In Development the API applies migrations and seeds sample data on startup. Elsewhere, run them yourself:
+
+```bash
+dotnet tool restore
+dotnet ef database update -p src/EmployeeManagement.Infrastructure -s src/EmployeeManagement.Api
+```
+
+Delete the `.db` file to start fresh. Details: [Day 9 notes](docs/week2/day9-ef-core.md).
 
 ## Test
 
@@ -117,3 +129,4 @@ Input file 'missing.csv' was not found.
 - Day 6: [REST API, status codes, request lifecycle](docs/week2/day6-rest-api.md)
 - Day 7: [DI lifetimes, middleware pipeline, configuration and logging](docs/week2/day7-di-and-middleware.md)
 - Day 8: [Layered architecture, validation and error handling](docs/week2/day8-layered-architecture.md)
+- Day 9: [EF Core, migrations, querying, tracking and N+1](docs/week2/day9-ef-core.md)

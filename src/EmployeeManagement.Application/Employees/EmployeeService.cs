@@ -8,7 +8,7 @@ namespace EmployeeManagement.Application.Employees;
 
 public interface IEmployeeService
 {
-    Task<IReadOnlyList<EmployeeResponse>> ListAsync(CancellationToken cancellationToken);
+    Task<PagedResult<EmployeeResponse>> ListAsync(EmployeeListQuery query, CancellationToken cancellationToken);
     Task<EmployeeResponse> GetAsync(int id, CancellationToken cancellationToken);
     Task<EmployeeResponse> CreateAsync(CreateEmployeeRequest request, CancellationToken cancellationToken);
     Task UpdateAsync(int id, UpdateEmployeeRequest request, CancellationToken cancellationToken);
@@ -25,8 +25,8 @@ public sealed class EmployeeService(
     IEmployeeFactory factory,
     ILogger<EmployeeService> logger) : IEmployeeService
 {
-    public async Task<IReadOnlyList<EmployeeResponse>> ListAsync(CancellationToken cancellationToken) =>
-        (await employees.ListAsync(cancellationToken)).Select(e => e.ToResponse()).ToList();
+    public async Task<PagedResult<EmployeeResponse>> ListAsync(EmployeeListQuery query, CancellationToken cancellationToken) =>
+        (await employees.ListAsync(query, cancellationToken)).Map(e => e.ToResponse());
 
     public async Task<EmployeeResponse> GetAsync(int id, CancellationToken cancellationToken) =>
         (await GetEmployeeAsync(id, cancellationToken)).ToResponse();

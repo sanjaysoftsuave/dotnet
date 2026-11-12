@@ -15,7 +15,11 @@ public sealed class ServiceLifetimeTests : IDisposable
     public ServiceLifetimeTests()
     {
         IConfiguration configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?> { ["Hiring:MaxDaysInFuture"] = "45" })
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Hiring:MaxDaysInFuture"] = "45",
+                ["ConnectionStrings:EmployeeDb"] = "Data Source=:memory:",
+            })
             .Build();
 
         _provider = new ServiceCollection()

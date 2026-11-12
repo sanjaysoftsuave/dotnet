@@ -2,9 +2,18 @@
 
 ### ---------- Employees: success ----------
 
-### List employees (200)
+### List employees, first page of 20 (200)
 GET {{host}}/api/employees
 Accept: application/json
+
+### Filter, sort and page (200)
+GET {{host}}/api/employees?departmentId=1&search=a&sortBy=HireDate&sortDirection=Desc&page=1&pageSize=2
+
+### Contractors hired in 2024 or later (200)
+GET {{host}}/api/employees?employmentType=Contractor&hiredFrom=2024-01-01
+
+### Invalid paging (400 validation problem)
+GET {{host}}/api/employees?page=0&pageSize=500
 
 ### Get one employee (200)
 GET {{host}}/api/employees/1

@@ -1,4 +1,5 @@
 using EmployeeManagement.Application.Abstractions;
+using EmployeeManagement.Application.Employees;
 using EmployeeManagement.Domain.Departments;
 using EmployeeManagement.Domain.Employees;
 
@@ -13,8 +14,12 @@ internal sealed class FakeEmployeeRepository : IEmployeeRepository
     public Task<Employee?> GetByIdAsync(int id, CancellationToken cancellationToken) =>
         Task.FromResult(Items.FirstOrDefault(e => e.Id == id));
 
-    public Task<IReadOnlyList<Employee>> ListAsync(CancellationToken cancellationToken) =>
-        Task.FromResult<IReadOnlyList<Employee>>(Items.ToList());
+    public Task<PagedResult<Employee>> ListAsync(EmployeeListQuery query, CancellationToken cancellationToken)
+    {
+        IQueryable<Employee> filtered = Items.AsQueryable().ApplyFilters(query);
+        var page = filtered.ApplySorting(query).ApplyPaging(query).ToList();
+        return Task.FromResult(new PagedResult<Employee>(page, query.Page, query.PageSize, filtered.Count()));
+    }
 
     public Task<IReadOnlyList<Employee>> ListByDepartmentAsync(int departmentId, CancellationToken cancellationToken) =>
         Task.FromResult<IReadOnlyList<Employee>>(Items.Where(e => e.DepartmentId == departmentId).ToList());

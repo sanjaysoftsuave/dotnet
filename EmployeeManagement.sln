@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeManagement.Infrastr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeManagement.Application.Tests", "tests\EmployeeManagement.Application.Tests\EmployeeManagement.Application.Tests.csproj", "{36A76720-801D-423F-8CBF-360FEFB98377}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeManagement.Infrastructure.Tests", "tests\EmployeeManagement.Infrastructure.Tests\EmployeeManagement.Infrastructure.Tests.csproj", "{7990F89A-83CB-41D9-8DC3-4189545EBD72}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +131,18 @@ Global
 		{36A76720-801D-423F-8CBF-360FEFB98377}.Release|x64.Build.0 = Release|Any CPU
 		{36A76720-801D-423F-8CBF-360FEFB98377}.Release|x86.ActiveCfg = Release|Any CPU
 		{36A76720-801D-423F-8CBF-360FEFB98377}.Release|x86.Build.0 = Release|Any CPU
+		{7990F89A-83CB-41D9-8DC3-4189545EBD72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7990F89A-83CB-41D9-8DC3-4189545EBD72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7990F89A-83CB-41D9-8DC3-4189545EBD72}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7990F89A-83CB-41D9-8DC3-4189545EBD72}.Debug|x64.Build.0 = Debug|Any CPU
+		{7990F89A-83CB-41D9-8DC3-4189545EBD72}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7990F89A-83CB-41D9-8DC3-4189545EBD72}.Debug|x86.Build.0 = Debug|Any CPU
+		{7990F89A-83CB-41D9-8DC3-4189545EBD72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7990F89A-83CB-41D9-8DC3-4189545EBD72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7990F89A-83CB-41D9-8DC3-4189545EBD72}.Release|x64.ActiveCfg = Release|Any CPU
+		{7990F89A-83CB-41D9-8DC3-4189545EBD72}.Release|x64.Build.0 = Release|Any CPU
+		{7990F89A-83CB-41D9-8DC3-4189545EBD72}.Release|x86.ActiveCfg = Release|Any CPU
+		{7990F89A-83CB-41D9-8DC3-4189545EBD72}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -142,5 +156,6 @@ Global
 		{ACA8187B-E3A3-4D41-906D-9E2A035789ED} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{6A39F7F7-62A4-4567-8D05-0C8DFD4AC664} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{36A76720-801D-423F-8CBF-360FEFB98377} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+		{7990F89A-83CB-41D9-8DC3-4189545EBD72} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal

@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using EmployeeManagement.Api;
 using EmployeeManagement.Api.Middleware;
+using EmployeeManagement.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddEmployeeManagement(builder.Configuration);
 
 var app = builder.Build();
+
+// Applies migrations and seeds sample data when enabled in configuration (Development).
+await app.Services.InitializeDatabaseAsync();
 
 // Order matters: each middleware wraps everything registered after it.
 app.UseMiddleware<RequestLoggingMiddleware>(); // 1. outermost, so it logs the final status code
@@ -25,7 +29,7 @@ if (app.Environment.IsDevelopment())
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();
 
 // Lets the test project reference the entry point (WebApplicationFactory<Program>).
 public partial class Program;

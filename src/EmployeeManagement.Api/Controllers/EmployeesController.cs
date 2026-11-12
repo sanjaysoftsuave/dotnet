@@ -11,9 +11,11 @@ namespace EmployeeManagement.Api.Controllers;
 public sealed class EmployeesController(IEmployeeService employees) : ControllerBase
 {
     [HttpGet]
-    [ProducesResponseType<IReadOnlyList<EmployeeResponse>>(StatusCodes.Status200OK)]
-    public async Task<ActionResult<IReadOnlyList<EmployeeResponse>>> GetAll(CancellationToken cancellationToken) =>
-        Ok(await employees.ListAsync(cancellationToken));
+    [ProducesResponseType<PagedResult<EmployeeResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<PagedResult<EmployeeResponse>>> GetAll(
+        [FromQuery] EmployeeListQuery query, CancellationToken cancellationToken) =>
+        Ok(await employees.ListAsync(query, cancellationToken));
 
     [HttpGet("{id:int}")]
     [ProducesResponseType<EmployeeResponse>(StatusCodes.Status200OK)]
