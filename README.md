@@ -11,6 +11,7 @@ Capstone project for the 3-week .NET Engineering Bridge. The domain is **Employe
 | Path | Purpose |
 |---|---|
 | `src/EmployeeManagement.ConsoleApp` | Console app that loads employee records from CSV and prints reports |
+| `src/EmployeeManagement.Domain` | Domain model (employees, departments), repository interfaces and in-memory implementations, organisation rules |
 | `data/employees.csv` | Sample input (the last row is invalid on purpose) |
 | `docs/week1` | Daily notes |
 
@@ -65,3 +66,4 @@ Input file 'missing.csv' was not found.
 ## Daily notes
 
 - Day 1: [Value vs reference types](docs/week1/day1-value-vs-reference-types.md)
+- Day 2: [Domain model, class diagram and SOLID](docs/week1/day2-domain-design.md)
